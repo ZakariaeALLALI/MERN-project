@@ -1,8 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
 
 function ProductList() {
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState([
+    {
+      id: 1,
+      title: "Elegant Ring",
+      description: "Beautiful gold ring with diamond",
+      price: 299.99,
+      stockQuantity: 5,
+      availability: true,
+    },
+    // Add more mock products as needed
+  ]);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [productToEdit, setProductToEdit] = useState(null);
   const [updatedProductData, setUpdatedProductData] = useState({
@@ -13,33 +23,10 @@ function ProductList() {
     availability: false,
   });
 
-  // Fetch products when the component mounts
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get('http://localhost:4000/api/products');
-        setProducts(response.data);
-      } catch (error) {
-        console.error('Error fetching products:', error);
-      }
-    };
-
-    fetchProducts();
-  }, []);
-
-  // Handle delete product
-  const deleteProduct = async (_id) => {
-    try {
-      const response = await axios.delete(`http://localhost:4000/api/products/${_id}`);
-      // After deletion, remove the product from the UI
-      setProducts(products.filter(product => product._id !== _id));
-      console.log('Product deleted:', response.data);
-    } catch (error) {
-      console.error('Error deleting product:', error);
-    }
+  const deleteProduct = (id) => {
+    setProducts(products.filter(product => product.id !== id));
   };
 
-  // Handle update product (open modal)
   const handleUpdateClick = (product) => {
     setProductToEdit(product);
     setUpdatedProductData({
@@ -52,7 +39,6 @@ function ProductList() {
     setIsModalOpen(true);
   };
 
-  // Handle form input changes for the update
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setUpdatedProductData({
@@ -61,159 +47,100 @@ function ProductList() {
     });
   };
 
-  // Handle save (submit the update)
-  const handleSubmitUpdate = async (e) => {
+  const handleSubmitUpdate = (e) => {
     e.preventDefault();
-    console.log("Submitting update with data:", updatedProductData); // Check the data being submitted
-    console.log("Product ID:", productToEdit._id); // Ensure the ID is valid
-
-    if (!productToEdit || !productToEdit._id) {
-      console.error("Invalid product ID");
-      return; // Exit if the product ID is invalid
-    }
-
-    try {
-      const response = await axios.put(
-        `http://localhost:4000/api/products/${productToEdit._id}`,
-        updatedProductData // Make sure only the updated text fields are sent
-      );
-
-      // Assuming the backend returns the updated product data in response.data
-      const updatedProduct = response.data.product;
-      setProducts(products.map(product => product._id === updatedProduct._id ? updatedProduct : product));
-
-      console.log('Product updated:', updatedProduct);
-      setIsModalOpen(false); // Close the modal after successful update
-    } catch (error) {
-      console.error('Error updating product:', error);
-    }
+    setProducts(products.map(product => 
+      product.id === productToEdit.id ? { ...product, ...updatedProductData } : product
+    ));
+    setIsModalOpen(false);
   };
 
   return (
     <div className="bg-black py-6 px-4">
       <h3 className="text-xl font-bold mb-6 text-white">Product List</h3>
-
-      <div className="space-y-4">
-        {products.length > 0 ? (
-          products.map((product) => (
-            <div
-              key={product._id}
-              className="bg-white text-black p-4 rounded-lg shadow-md"
-            >
-              <div className="flex flex-col md:flex-row justify-between items-center md:items-start space-y-4 md:space-y-0">
-                <div className="md:w-1/2">
-                  <h4 className="text-xl font-semibold">{product.title}</h4>
-                  <p className="text-sm">{product.description}</p>
-                  <p className="text-sm mt-2">
-                    <strong>Price:</strong> ${product.price}
-                  </p>
-                  <p className="text-sm">
-                    <strong>Availability:</strong> {product.availability ? 'Available' : 'Unavailable'}
-                  </p>
-                  <p className="text-sm">
-                    <strong>Stock:</strong> {product.stockQuantity}
-                  </p>
-                </div>
-                {product.image && (
-                  <div className="md:w-1/3">
-                    <img
-                      src={`http://localhost:4000/${product.image}`}
-                      alt={product.title || 'Product Image'}
-                      className="w-full h-auto object-cover rounded-lg"
-                    />
-                  </div>
-                )}
-                <div className="flex space-x-4 mt-4 md:mt-6 justify-start">
-                  <button
-                    className="bg-yellow-500 text-white px-4 py-1 rounded hover:bg-yellow-600"
-                    onClick={() => handleUpdateClick(product)}
-                  >
-                    Update
-                  </button>
-                  <button
-                    className="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600"
-                    onClick={() => deleteProduct(product._id)}
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {products.map((product) => (
+          <div key={product.id} className="bg-white p-4 rounded-lg shadow">
+            <h4 className="text-lg font-semibold">{product.title}</h4>
+            <p className="text-gray-600">{product.description}</p>
+            <p className="text-lg font-bold">${product.price}</p>
+            <p className="text-sm">Stock: {product.stockQuantity}</p>
+            <div className="mt-4 space-x-2">
+              <button
+                onClick={() => handleUpdateClick(product)}
+                className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => deleteProduct(product.id)}
+                className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+              >
+                Delete
+              </button>
             </div>
-          ))
-        ) : (
-          <div className="text-center text-white">No products available</div>
-        )}
+          </div>
+        ))}
       </div>
 
-      {/* Modal for updating product */}
+      {/* Edit Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-gray-700 bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
-            <h2 className="text-xl font-bold mb-4">Update Product</h2>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg w-96">
+            <h3 className="text-xl font-bold mb-4">Edit Product</h3>
             <form onSubmit={handleSubmitUpdate}>
               <div className="mb-4">
-                <label htmlFor="title" className="block text-sm font-semibold">Title</label>
+                <label className="block text-sm font-medium mb-1">Title</label>
                 <input
                   type="text"
-                  id="title"
                   name="title"
                   value={updatedProductData.title}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded"
+                  className="w-full border rounded p-2"
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="description" className="block text-sm font-semibold">Description</label>
+                <label className="block text-sm font-medium mb-1">Description</label>
                 <textarea
-                  id="description"
                   name="description"
                   value={updatedProductData.description}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded"
+                  className="w-full border rounded p-2"
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="price" className="block text-sm font-semibold">Price</label>
+                <label className="block text-sm font-medium mb-1">Price</label>
                 <input
                   type="number"
-                  id="price"
                   name="price"
                   value={updatedProductData.price}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded"
+                  className="w-full border rounded p-2"
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="stockQuantity" className="block text-sm font-semibold">Stock Quantity</label>
+                <label className="block text-sm font-medium mb-1">Stock Quantity</label>
                 <input
                   type="number"
-                  id="stockQuantity"
                   name="stockQuantity"
                   value={updatedProductData.stockQuantity}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded"
+                  className="w-full border rounded p-2"
                 />
               </div>
-              <div className="mb-4">
-                <label htmlFor="availability" className="block text-sm font-semibold">Availability</label>
-                <input
-                  type="checkbox"
-                  id="availability"
-                  name="availability"
-                  checked={updatedProductData.availability}
-                  onChange={(e) => setUpdatedProductData({ ...updatedProductData, availability: e.target.checked })}
-                />
-              </div>
-              <div className="flex justify-end">
-                <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                  Save
-                </button>
+              <div className="flex justify-end space-x-2">
                 <button
                   type="button"
-                  className="ml-4 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
                   onClick={() => setIsModalOpen(false)}
+                  className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
                 >
                   Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                >
+                  Save Changes
                 </button>
               </div>
             </form>

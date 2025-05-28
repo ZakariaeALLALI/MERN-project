@@ -6,6 +6,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { auth } from '../../firebaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import PageTopSection from '../components/PageTopSection';
 
 function Login() {
   const [data, setData] = useState({
@@ -44,8 +45,10 @@ function Login() {
 
   return (
     <div>
-      <Navbar />
+      <PageTopSection />
+
       <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} closeOnClick />
+
       <div
         className="min-h-screen bg-no-repeat bg-center flex flex-col items-center justify-center w-full overflow-hidden"
         style={{
@@ -54,13 +57,11 @@ function Login() {
           backgroundPosition: 'center',
         }}
       >
-        <div className="font-news-reader flex flex-col items-center justify-center container mx-auto p-8 md:px-20 lg:px-32 w-full overflow-hidden mt-16">
+        <div className="flex flex-col items-center justify-center container mx-auto px-4 py-8">
           <form
             className="w-full max-w-md bg-white shadow-xl rounded-lg px-8 pt-6 pb-8 mb-4"
             onSubmit={loginUser}
           >
-            <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Log In</h2>
-
             {/* Email Field */}
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">

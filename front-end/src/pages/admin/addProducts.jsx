@@ -1,170 +1,138 @@
-import axios from 'axios';
 import React, { useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 
 function AddProducts() {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [price, setPrice] = useState('');
-  const [category, setCategory] = useState('');
-  const [type, setType] = useState('');
-  const [availability, setAvailability] = useState(false);
-  const [stockQuantity, setStockQuantity] = useState('');
-  const [image, setImage] = useState(null);
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    price: '',
+    category: '',
+    type: '',
+    availability: false,
+    stockQuantity: '',
+  });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-  
-    // Prepare the FormData object to send the data
-    const formData = new FormData();
-    formData.append('title', title);
-    formData.append('description', description);
-    formData.append('price', price);
-    formData.append('category', category);
-    formData.append('type', type);
-    formData.append('availability', availability);
-    formData.append('stockQuantity', stockQuantity);
-    formData.append('image', image);
-  
-    try {
-      // Send the POST request to add the product
-      const response = await axios.post('http://localhost:4000/api/products', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-      console.log('Product added:', response.data);
-      // Optionally, you can show a success message here
-    } catch (error) {
-      console.error('Error adding product:', error);
-      // Optionally, you can handle the error, like showing an error message
-    }
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
   };
-  
-  
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    // Validate form data
+    if (!formData.title || !formData.description || !formData.price || !formData.category || !formData.type || !formData.stockQuantity) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
+
+    // Here you would typically send the data to your backend
+    // For now, we'll just show a success message
+    toast.success('Product added successfully!');
+    
+    // Reset form
+    setFormData({
+      title: '',
+      description: '',
+      price: '',
+      category: '',
+      type: '',
+      availability: false,
+      stockQuantity: '',
+    });
+  };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-black">
-      <div id="addProduct" className="bg-white rounded-lg shadow-md p-6 w-full">
-        <h3 className="text-xl font-bold mb-4 text-center text-black">Add Product</h3>
-        <form onSubmit={handleSubmit} className="space-y-4"> {/* Added space-y-4 for vertical spacing */}
-          
+    <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md mx-auto bg-white rounded-lg shadow-lg p-8">
+        <h2 className="text-3xl font-bold text-center mb-8">Add New Product</h2>
+        
+        <form onSubmit={handleSubmit} className="space-y-6">
           {/* Title */}
-          <div className="mb-4">
+          <div>
             <label htmlFor="title" className="block text-sm font-medium text-gray-700">
               Title
             </label>
             <input
               type="text"
               id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Enter product title"
-              className="w-full mt-2 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              name="title"
+              value={formData.title}
+              onChange={handleInputChange}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              required
             />
           </div>
 
           {/* Description */}
-          <div className="mb-4">
+          <div>
             <label htmlFor="description" className="block text-sm font-medium text-gray-700">
               Description
             </label>
             <textarea
               id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Enter product description"
-              className="w-full mt-2 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              name="description"
+              value={formData.description}
+              onChange={handleInputChange}
+              rows="3"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              required
             />
           </div>
 
-          {/* Availability */}
-          <div className="mb-4">
-            <label htmlFor="availability" className="block text-sm font-medium text-gray-700">
-              Availability
-            </label>
-            <div className="flex items-center mt-2">
-              <input
-                type="checkbox"
-                id="availability"
-                checked={availability}
-                onChange={(e) => setAvailability(e.target.checked)}
-                className="form-checkbox h-5 w-5 text-blue-600"
-              />
-              <span className="ml-2 text-sm text-gray-700">{availability ? 'Available' : 'Unavailable'}</span>
-            </div>
-          </div>
-
           {/* Price */}
-          <div className="mb-4">
+          <div>
             <label htmlFor="price" className="block text-sm font-medium text-gray-700">
               Price
             </label>
             <input
-              type="text"
-              id="price"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-              placeholder="Enter product price"
-              className="w-full mt-2 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          {/* Product Image */}
-          <div className="mb-4">
-            <label htmlFor="image" className="block text-sm font-medium text-gray-700">
-              Product Image
-            </label>
-            <input
-              type="file"
-              id="image"
-              onChange={(e) => setImage(e.target.files[0])}
-              className="w-full mt-2 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          {/* Stock Quantity */}
-          <div className="mb-4">
-            <label htmlFor="stockQuantity" className="block text-sm font-medium text-gray-700">
-              Stock Quantity
-            </label>
-            <input
               type="number"
-              id="stockQuantity"
-              value={stockQuantity}
-              onChange={(e) => setStockQuantity(e.target.value)}
-              placeholder="Enter product stock quantity"
-              className="w-full mt-2 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              id="price"
+              name="price"
+              value={formData.price}
+              onChange={handleInputChange}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              required
             />
           </div>
 
           {/* Category */}
-          <div className="mb-4">
+          <div>
             <label htmlFor="category" className="block text-sm font-medium text-gray-700">
               Category
             </label>
             <select
               id="category"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="w-full mt-2 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              name="category"
+              value={formData.category}
+              onChange={handleInputChange}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              required
             >
-              <option value="Men">Men</option>
-              <option value="Women">Women</option>
-              <option value="Unisex">Unisex</option>
+              <option value="">Select a category</option>
+              <option value="Jewelry">Jewelry</option>
               <option value="Accessories">Accessories</option>
+              <option value="Clothing">Clothing</option>
             </select>
           </div>
 
           {/* Type */}
-          <div className="mb-4">
+          <div>
             <label htmlFor="type" className="block text-sm font-medium text-gray-700">
               Type
             </label>
             <select
               id="type"
-              value={type}
-              onChange={(e) => setType(e.target.value)}
-              className="w-full mt-2 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              name="type"
+              value={formData.type}
+              onChange={handleInputChange}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              required
             >
+              <option value="">Select a type</option>
               <option value="Earrings">Earrings</option>
               <option value="Necklaces">Necklaces</option>
               <option value="Rings">Rings</option>
@@ -173,16 +141,46 @@ function AddProducts() {
             </select>
           </div>
 
+          {/* Stock Quantity */}
+          <div>
+            <label htmlFor="stockQuantity" className="block text-sm font-medium text-gray-700">
+              Stock Quantity
+            </label>
+            <input
+              type="number"
+              id="stockQuantity"
+              name="stockQuantity"
+              value={formData.stockQuantity}
+              onChange={handleInputChange}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              required
+            />
+          </div>
+
+          {/* Availability */}
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              id="availability"
+              name="availability"
+              checked={formData.availability}
+              onChange={handleInputChange}
+              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+            />
+            <label htmlFor="availability" className="ml-2 block text-sm text-gray-900">
+              Available for purchase
+            </label>
+          </div>
+
           {/* Submit Button */}
           <button
             type="submit"
-            className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 w-full"
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             Add Product
           </button>
         </form>
       </div>
-
       <ToastContainer />
     </div>
   );

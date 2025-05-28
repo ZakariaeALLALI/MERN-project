@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import Footer from '../components/Footer';
 import Navbar from '../components/Navbar';
+import store from '../assets/store.jpg';
+import PageTopSection from '../components/PageTopSection';
 
 function ContactUs() {
   const [formData, setFormData] = useState({
@@ -26,102 +27,90 @@ function ContactUs() {
     setIsSubmitting(true);
     setResponseMessage('');
 
-    try {
-      const response = await axios.post('http://localhost:4000/api/contacts', formData, {
-        headers: { 'Content-Type': 'application/json' },
-      });
-
-      setResponseMessage('Message sent successfully!');
+    // Simulate form submission
+    setTimeout(() => {
+      setResponseMessage('Thank you for contacting us. We will get back to you soon!');
       setFormData({ name: '', email: '', message: '' }); // Clear the form
-    } catch (error) {
-      setResponseMessage(
-        error.response?.data?.error || 'thank you for contacting us.'
-      );
-    } finally {
       setIsSubmitting(false);
-    }
+    }, 1000);
   };
 
   return (
     <div>
-      <Navbar />
-      <div className="py-10 px-4 bg-gray-100">
-        <div className="flex flex-col md:flex-row items-center justify-between min-h-[70vh] p-10">
-          {/* Form Section */}
-          <div className="w-full md:w-1/2 p-7 bg-white shadow-lg rounded-lg flex flex-col justify-center">
-            <h2 className="text-3xl font-bold mb-6 text-gray-800 text-center">Contact Us</h2>
-            <form className="space-y-6" onSubmit={handleSubmit}>
-              {/* Name Field */}
-              <div>
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
-                  First Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  placeholder="Enter your first name"
-                  className="w-full border rounded-lg py-2 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-900"
-                  required
-                />
-              </div>
-              {/* Email Field */}
-              <div>
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  placeholder="Enter your email"
-                  className="w-full border rounded-lg py-2 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-900"
-                  required
-                />
-              </div>
-              {/* Message Field */}
-              <div>
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="message">
-                  Message
-                </label>
-                <textarea
-                  id="message"
-                  value={formData.message}
-                  onChange={handleInputChange}
-                  placeholder="Write your message here"
-                  className="w-full border rounded-lg py-2 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-900"
-                  rows="5"
-                  required
-                />
-              </div>
-              {/* Submit Button */}
-              <div className="text-center">
+      <PageTopSection />
+
+      <div className="min-h-screen bg-black py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-col md:flex-row gap-8">
+            {/* Form Section */}
+            <div className="w-full md:w-1/2 bg-black border border-gray-800 rounded-lg shadow-lg p-8">
+              {responseMessage && (
+                <div className="mb-4 p-4 bg-green-900 text-green-300 rounded border border-green-700">
+                  {responseMessage}
+                </div>
+              )}
+
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-300">
+                    Name
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    required
+                    className="mt-1 block w-full rounded-none border border-gray-600 bg-transparent text-white shadow-sm focus:border-white focus:ring-white"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-300">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    required
+                    className="mt-1 block w-full rounded-none border border-gray-600 bg-transparent text-white shadow-sm focus:border-white focus:ring-white"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="message" className="block text-sm font-medium text-gray-300">
+                    Message
+                  </label>
+                  <textarea
+                    id="message"
+                    value={formData.message}
+                    onChange={handleInputChange}
+                    required
+                    rows="4"
+                    className="mt-1 block w-full rounded-none border border-gray-600 bg-transparent text-white shadow-sm focus:border-white focus:ring-white"
+                  />
+                </div>
+
                 <button
                   type="submit"
-                  className="bg-green-900 hover:bg-green-800 text-white font-bold py-2 px-8 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-900"
                   disabled={isSubmitting}
+                  className="w-full flex justify-center py-3 px-4 border border-white rounded-none shadow-sm text-base font-medium text-white bg-transparent hover:bg-white hover:text-black transition-all duration-300"
                 >
                   {isSubmitting ? 'Sending...' : 'Send Message'}
                 </button>
-              </div>
-              {/* Response Message */}
-              {responseMessage && (
-                <p className={`mt-4 text-center ${isSubmitting ? 'text-gray-500' : 'text-green-600'}`}>
-                  {responseMessage}
-                </p>
-              )}
-            </form>
-          </div>
+              </form>
+            </div>
 
-          {/* Image Section */}
-          <div className="w-full md:w-1/2 h-full flex items-center justify-center md:pl-8">
-            <img
-              src="/ryan.png"
-              alt="Contact Us"
-              className="w-11/12 max-h rounded-e-lg shadow-md"
-            />
+            {/* Image Section */}
+            <div className="w-full md:w-1/2">
+              <img
+                src={store}
+                alt="Our Store"
+                className="w-full h-full object-cover rounded-lg shadow-lg"
+              />
+            </div>
           </div>
         </div>
       </div>

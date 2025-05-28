@@ -8,4 +8,17 @@ export default defineConfig({
       overlay: false,
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: undefined,
+        format: 'es',
+      },
+    },
+    assetsInlineLimit: 0,
+    sourcemap: true,
+  },
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-router-dom'],
+  },
 });

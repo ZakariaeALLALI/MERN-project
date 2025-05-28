@@ -1,13 +1,15 @@
 import React from 'react';
-import Header from '../components/Header';
+import Navbar from '../components/Navbar';
 import About from '../components/About';
 import Store from '../components/Store';
 import Footer from '../components/Footer';
+import PageTopSection from '../components/PageTopSection';
 
 function Home() {
   return (
     <div>
-      <Header />
+      <PageTopSection />
+
       <About />
       <Store />
       <Footer />

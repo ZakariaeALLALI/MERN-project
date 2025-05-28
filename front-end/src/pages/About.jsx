@@ -2,15 +2,18 @@ import React from 'react'
 import Navbar from '../components/Navbar'
 import { assets } from '../assets/assets'
 import Footer from '../components/Footer'
+import PageTopSection from '../components/PageTopSection'
 
 function About() {
   return (
     <div>
       <Navbar />
-      <div className='font-news-reader flex flex-col items-center justify-center container mx-auto p-8 md:px-20 lg:px-32 w-full overflow-hidden mt-16'>
-        <h1 className="text-2xl sm:text-4xl font-bold text-black">ABOUT LE PLAISIR</h1>
-      </div>
 
+      <div className="text-center mb-20">
+        <div className="inline-block border-b-2 border-white pb-4 mb-6">
+          <h1 className="text-6xl font-serif text-white tracking-wider">ABOUT US</h1>
+        </div>
+      </div>
       <div className='flex flex-wrap justify-center gap-6 md:gap-10'>
         <img src={assets.gc} alt="gc pic" className='w-full sm:w-3/4 md:w-2/5 lg:w-3/5 max-w-full px-4 mx-auto my-6' />
       </div>
